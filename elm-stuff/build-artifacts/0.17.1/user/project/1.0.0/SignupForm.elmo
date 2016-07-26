@@ -1,0 +1,142 @@
+var _user$project$SignupForm$initialErrors = {username: '', password: ''};
+var _user$project$SignupForm$initialModel = {username: '', password: '', errors: _user$project$SignupForm$initialErrors};
+var _user$project$SignupForm$getErrors = function (model) {
+	return {
+		username: _elm_lang$core$Native_Utils.eq(model.username, '') ? 'Please enter a username!' : '',
+		password: _elm_lang$core$Native_Utils.eq(model.password, '') ? 'Please enter a password' : ''
+	};
+};
+var _user$project$SignupForm$update = F2(
+	function (msg, model) {
+		return _elm_lang$core$Native_Utils.eq(msg.msgType, 'VALIDATE') ? {
+			ctor: '_Tuple2',
+			_0: _elm_lang$core$Native_Utils.update(
+				model,
+				{
+					errors: _user$project$SignupForm$getErrors(model)
+				}),
+			_1: _elm_lang$core$Platform_Cmd$none
+		} : (_elm_lang$core$Native_Utils.eq(msg.msgType, 'SET_USERNAME') ? {
+			ctor: '_Tuple2',
+			_0: _elm_lang$core$Native_Utils.update(
+				model,
+				{username: msg.payload}),
+			_1: _elm_lang$core$Platform_Cmd$none
+		} : (_elm_lang$core$Native_Utils.eq(msg.msgType, 'SET_PASSWORD') ? {
+			ctor: '_Tuple2',
+			_0: _elm_lang$core$Native_Utils.update(
+				model,
+				{password: msg.payload}),
+			_1: _elm_lang$core$Platform_Cmd$none
+		} : {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none}));
+	});
+var _user$project$SignupForm$view = function (model) {
+	return A2(
+		_elm_lang$html$Html$form,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html_Attributes$id('signup-form')
+			]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				A2(
+				_elm_lang$html$Html$h1,
+				_elm_lang$core$Native_List.fromArray(
+					[]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html$text('Sensational Signup Form')
+					])),
+				A2(
+				_elm_lang$html$Html$label,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$for('username-field')
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html$text('username: ')
+					])),
+				A2(
+				_elm_lang$html$Html$input,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$id('username-field'),
+						_elm_lang$html$Html_Attributes$type$('text'),
+						_elm_lang$html$Html_Attributes$value(model.username),
+						_elm_lang$html$Html_Events$onInput(
+						function (str) {
+							return {msgType: 'SET_USERNAME', payload: str};
+						})
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[])),
+				A2(
+				_elm_lang$html$Html$div,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$class('validation-error')
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html$text(model.errors.username)
+					])),
+				A2(
+				_elm_lang$html$Html$label,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$for('password')
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html$text('password: ')
+					])),
+				A2(
+				_elm_lang$html$Html$input,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$id('password-field'),
+						_elm_lang$html$Html_Attributes$type$('password'),
+						_elm_lang$html$Html_Attributes$value(model.password),
+						_elm_lang$html$Html_Events$onInput(
+						function (str) {
+							return {msgType: 'SET_PASSWORD', payload: str};
+						})
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[])),
+				A2(
+				_elm_lang$html$Html$div,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$class('validation-error')
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html$text(model.errors.password)
+					])),
+				A2(
+				_elm_lang$html$Html$div,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$class('signup-button'),
+						_elm_lang$html$Html_Events$onClick(
+						{msgType: 'VALIDATE', payload: ''})
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html$text('Sign Up!')
+					]))
+			]));
+};
+var _user$project$SignupForm$main = {
+	main: _elm_lang$html$Html_App$program(
+		{
+			init: {ctor: '_Tuple2', _0: _user$project$SignupForm$initialModel, _1: _elm_lang$core$Platform_Cmd$none},
+			view: _user$project$SignupForm$view,
+			update: _user$project$SignupForm$update,
+			subscriptions: function (_p0) {
+				return _elm_lang$core$Platform_Sub$none;
+			}
+		})
+};
