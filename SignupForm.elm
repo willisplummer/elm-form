@@ -8,6 +8,8 @@ import Html.Events exposing (onClick)
 import Http
 import Json.Decode as Json
 import Task
+import String exposing (isEmpty)
+import List exposing (map, concat, concatMap)
 
 
 main : Program Never
@@ -26,13 +28,12 @@ type alias Model =
     , response : String
     , errors : Errors
     , page : Page
-    , hide : Bool
     }
 
 
 type alias Errors =
-    { email : String
-    , password : String
+    { email : Maybe String
+    , password : Maybe String
     }
 
 
@@ -43,12 +44,12 @@ type Page
 
 initialErrors : Errors
 initialErrors =
-    Errors "" ""
+    Errors Nothing Nothing
 
 
 model : Model
 model =
-    Model "" "" "" "" initialErrors Login True
+    Model "" "" "" "" initialErrors Login
 
 
 init : ( Model, Cmd Msg )
@@ -94,7 +95,19 @@ update msg model =
             )
 
         Validate ->
-            validateSubmission model
+            let
+                newModel =
+                    validate model
+
+                cmd =
+                    if isValid newModel then
+                        submitData newModel
+                    else
+                        Cmd.none
+            in
+                ( newModel
+                , cmd
+                )
 
         SuccessToMessage response ->
             ( { model
@@ -112,35 +125,32 @@ update msg model =
             )
 
 
-validateSubmission : Model -> ( Model, Cmd Msg )
-validateSubmission model =
+validate : Model -> Model
+validate model =
     let
         newErrors =
             { email =
-                if model.email == "" then
-                    "Enter an email address"
+                if isEmpty model.email then
+                    Just "Enter an email address"
                 else
-                    ""
+                    Nothing
             , password =
-                if model.password == "" then
-                    "Enter a password!"
-                else if model.passwordAgain == "" then
-                    "Please re-enter your password!"
+                if isEmpty model.password then
+                    Just "Enter a password!"
+                else if isEmpty model.passwordAgain then
+                    Just "Please re-enter your password!"
                 else if model.password /= model.passwordAgain then
-                    "Passwords don't match"
+                    Just "Passwords don't match"
                 else
-                    ""
+                    Nothing
             }
     in
-        if newErrors.email == "" && newErrors.password == "" then
-            ( { model | errors = newErrors }, submitData model )
-        else
-            ( { model | errors = newErrors }, Cmd.none )
+        { model | errors = newErrors }
 
 
-areEmpty : String -> Bool
-areEmpty error =
-    error == ""
+isValid : Model -> Bool
+isValid model =
+    model.errors.email == Nothing && model.errors.password == Nothing
 
 
 
@@ -186,15 +196,32 @@ view model =
 
 renderLogin : Model -> Html Msg
 renderLogin model =
-    div []
-        [ input [ type' "text", placeholder "Email", onInput Email ] []
-        , div [ class "validation-error", style [ ( "color", "red" ) ] ] [ text model.errors.email ]
-        , input [ type' "password", placeholder "Password", onInput Password ] []
-        , input [ type' "password", placeholder "Re-enter Password", onInput PasswordAgain ] []
-        , div [ class "validation-error", style [ ( "color", "red" ) ] ] [ text model.errors.password ]
-        , button [ onClick Validate ] [ text "Submit" ]
-        , div [ class "response" ] [ text model.response ]
-        ]
+    let
+        listGuy =
+            validatedInput [ ( "Email", "text", Email ) ] model.errors.email
+                ++ validatedInput [ ( "Password", "password", Password ), ( "Re-enter Password", "password", PasswordAgain ) ] model.errors.password
+                ++ [ button [ onClick Validate ] [ text "Submit" ]
+                   , div [ class "response" ] [ text model.response ]
+                   ]
+    in
+        div [] listGuy
+
+
+validatedInput : List ( String, String, String -> Msg ) -> Maybe String -> List (Html Msg)
+validatedInput list error =
+    let
+        inputFields =
+            concatMap (\( a, b, c ) -> [ input [ type' b, placeholder a, onInput c ] [] ]) list
+
+        errorFields =
+            case error of
+                Just msg ->
+                    [ div [ class "validation-error", style [ ( "color", "red" ) ] ] [ text msg ] ]
+
+                Nothing ->
+                    []
+    in
+        inputFields ++ errorFields
 
 
 renderHome : Model -> Html Msg
