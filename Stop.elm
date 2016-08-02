@@ -88,9 +88,9 @@ showStopView model =
 editStopView : Model -> Html Msg
 editStopView model =
     div []
-        [ input [ type' "text", placeholder "MTA STOP ID", onInput MtaStopId ] []
+        [ input [ type' "text", placeholder "MTA STOP ID", value model.mtaStopId, onInput MtaStopId ] []
         , br [] []
-        , input [ type' "text", placeholder "Stop Nickname", onInput Name ] []
+        , input [ type' "text", placeholder "Stop Nickname", value model.name, onInput Name ] []
         , br [] []
         , button [ onClick (ChangeView Show) ] [ text "Submit" ]
         ]

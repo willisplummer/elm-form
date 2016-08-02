@@ -2,6 +2,7 @@ module StopsList exposing (..)
 
 import Html exposing (..)
 import Html.App as App
+import Html.Events exposing (..)
 import List
 import Stop
 
@@ -62,9 +63,17 @@ view model =
     let
         stops =
             List.map viewIndexedStop model.stops
+
+        add =
+            button [ onClick Add ] [ text "add" ]
+
+        remove =
+            button [ onClick Remove ] [ text "remove" ]
     in
         div []
-            stops
+            ([ add, remove ]
+                ++ stops
+            )
 
 
 viewIndexedStop : IndexedStop -> Html Msg
