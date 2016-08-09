@@ -8519,7 +8519,7 @@ var _evancz$elm_http$Http$post = F3(
 			decoder,
 			A2(_evancz$elm_http$Http$send, _evancz$elm_http$Http$defaultSettings, request));
 	});
-var _user$project$Main$renderHome = function (model) {
+var _user$project$Signup$renderHome = function (model) {
 	return A2(
 		_elm_lang$html$Html$div,
 		_elm_lang$core$Native_List.fromArray(
@@ -8551,73 +8551,107 @@ var _user$project$Main$renderHome = function (model) {
 					]))
 			]));
 };
-var _user$project$Main$decodeResponse = A2(
+var _user$project$Signup$validatedInput = F2(
+	function (list, error) {
+		var errorFields = function () {
+			var _p0 = error;
+			if (_p0.ctor === 'Just') {
+				return _elm_lang$core$Native_List.fromArray(
+					[
+						A2(
+						_elm_lang$html$Html$div,
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html_Attributes$class('validation-error'),
+								_elm_lang$html$Html_Attributes$style(
+								_elm_lang$core$Native_List.fromArray(
+									[
+										{ctor: '_Tuple2', _0: 'color', _1: 'red'}
+									]))
+							]),
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html$text(_p0._0)
+							]))
+					]);
+			} else {
+				return _elm_lang$core$Native_List.fromArray(
+					[]);
+			}
+		}();
+		var inputFields = A2(
+			_elm_lang$core$List$concatMap,
+			function (_p1) {
+				var _p2 = _p1;
+				return _elm_lang$core$Native_List.fromArray(
+					[
+						A2(
+						_elm_lang$html$Html$input,
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html_Attributes$type$(_p2._1),
+								_elm_lang$html$Html_Attributes$placeholder(_p2._0),
+								_elm_lang$html$Html_Events$onInput(_p2._2)
+							]),
+						_elm_lang$core$Native_List.fromArray(
+							[]))
+					]);
+			},
+			list);
+		return A2(_elm_lang$core$Basics_ops['++'], inputFields, errorFields);
+	});
+var _user$project$Signup$decodeResponse = A2(
 	_elm_lang$core$Json_Decode$at,
 	_elm_lang$core$Native_List.fromArray(
 		['email']),
 	_elm_lang$core$Json_Decode$string);
-var _user$project$Main$subscriptions = function (model) {
-	return _elm_lang$core$Platform_Sub$none;
+var _user$project$Signup$isValid = function (model) {
+	return _elm_lang$core$Native_Utils.eq(model.errors.email, _elm_lang$core$Maybe$Nothing) && _elm_lang$core$Native_Utils.eq(model.errors.password, _elm_lang$core$Maybe$Nothing);
 };
-var _user$project$Main$areEmpty = function (error) {
-	return _elm_lang$core$Native_Utils.eq(error, '');
+var _user$project$Signup$validate = function (model) {
+	var newErrors = {
+		email: _elm_lang$core$String$isEmpty(model.email) ? _elm_lang$core$Maybe$Just('Enter an email address') : _elm_lang$core$Maybe$Nothing,
+		password: _elm_lang$core$String$isEmpty(model.password) ? _elm_lang$core$Maybe$Just('Enter a password!') : (_elm_lang$core$String$isEmpty(model.passwordAgain) ? _elm_lang$core$Maybe$Just('Please re-enter your password!') : ((!_elm_lang$core$Native_Utils.eq(model.password, model.passwordAgain)) ? _elm_lang$core$Maybe$Just('Passwords don\'t match') : _elm_lang$core$Maybe$Nothing))
+	};
+	return _elm_lang$core$Native_Utils.update(
+		model,
+		{errors: newErrors});
 };
-var _user$project$Main$Model = F7(
-	function (a, b, c, d, e, f, g) {
-		return {email: a, password: b, passwordAgain: c, response: d, errors: e, page: f, hide: g};
+var _user$project$Signup$Model = F5(
+	function (a, b, c, d, e) {
+		return {email: a, password: b, passwordAgain: c, response: d, errors: e};
 	});
-var _user$project$Main$Errors = F2(
+var _user$project$Signup$Errors = F2(
 	function (a, b) {
 		return {email: a, password: b};
 	});
-var _user$project$Main$initialErrors = A2(_user$project$Main$Errors, '', '');
-var _user$project$Main$Home = {ctor: 'Home'};
-var _user$project$Main$Login = {ctor: 'Login'};
-var _user$project$Main$model = A7(_user$project$Main$Model, '', '', '', '', _user$project$Main$initialErrors, _user$project$Main$Login, true);
-var _user$project$Main$init = {ctor: '_Tuple2', _0: _user$project$Main$model, _1: _elm_lang$core$Platform_Cmd$none};
-var _user$project$Main$FailureToMessage = function (a) {
+var _user$project$Signup$initialErrors = A2(_user$project$Signup$Errors, _elm_lang$core$Maybe$Nothing, _elm_lang$core$Maybe$Nothing);
+var _user$project$Signup$model = A5(_user$project$Signup$Model, '', '', '', '', _user$project$Signup$initialErrors);
+var _user$project$Signup$init = _user$project$Signup$model;
+var _user$project$Signup$FailureToMessage = function (a) {
 	return {ctor: 'FailureToMessage', _0: a};
 };
-var _user$project$Main$SuccessToMessage = function (a) {
+var _user$project$Signup$SuccessToMessage = function (a) {
 	return {ctor: 'SuccessToMessage', _0: a};
 };
-var _user$project$Main$submitData = function (model) {
+var _user$project$Signup$submitData = function (model) {
 	var url = 'http://jsonplaceholder.typicode.com/users/1';
 	return A3(
 		_elm_lang$core$Task$perform,
-		_user$project$Main$FailureToMessage,
-		_user$project$Main$SuccessToMessage,
-		A2(_evancz$elm_http$Http$get, _user$project$Main$decodeResponse, url));
+		_user$project$Signup$FailureToMessage,
+		_user$project$Signup$SuccessToMessage,
+		A2(_evancz$elm_http$Http$get, _user$project$Signup$decodeResponse, url));
 };
-var _user$project$Main$validateSubmission = function (model) {
-	var newErrors = {
-		email: _elm_lang$core$Native_Utils.eq(model.email, '') ? 'Enter an email address' : '',
-		password: _elm_lang$core$Native_Utils.eq(model.password, '') ? 'Enter a password!' : (_elm_lang$core$Native_Utils.eq(model.passwordAgain, '') ? 'Please re-enter your password!' : ((!_elm_lang$core$Native_Utils.eq(model.password, model.passwordAgain)) ? 'Passwords don\'t match' : ''))
-	};
-	return (_elm_lang$core$Native_Utils.eq(newErrors.email, '') && _elm_lang$core$Native_Utils.eq(newErrors.password, '')) ? {
-		ctor: '_Tuple2',
-		_0: _elm_lang$core$Native_Utils.update(
-			model,
-			{errors: newErrors}),
-		_1: _user$project$Main$submitData(model)
-	} : {
-		ctor: '_Tuple2',
-		_0: _elm_lang$core$Native_Utils.update(
-			model,
-			{errors: newErrors}),
-		_1: _elm_lang$core$Platform_Cmd$none
-	};
-};
-var _user$project$Main$update = F2(
+var _user$project$Signup$update = F2(
 	function (msg, model) {
-		var _p0 = msg;
-		switch (_p0.ctor) {
+		var _p3 = msg;
+		switch (_p3.ctor) {
 			case 'Email':
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
-						{email: _p0._0}),
+						{email: _p3._0}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'Password':
@@ -8625,7 +8659,7 @@ var _user$project$Main$update = F2(
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
-						{password: _p0._0}),
+						{password: _p3._0}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'PasswordAgain':
@@ -8633,17 +8667,19 @@ var _user$project$Main$update = F2(
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
-						{passwordAgain: _p0._0}),
+						{passwordAgain: _p3._0}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'Validate':
-				return _user$project$Main$validateSubmission(model);
+				var newModel = _user$project$Signup$validate(model);
+				var cmd = _user$project$Signup$isValid(newModel) ? _user$project$Signup$submitData(newModel) : _elm_lang$core$Platform_Cmd$none;
+				return {ctor: '_Tuple2', _0: newModel, _1: cmd};
 			case 'SuccessToMessage':
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
-						{response: _p0._0, page: _user$project$Main$Home}),
+						{response: _p3._0}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			default:
@@ -8656,17 +8692,152 @@ var _user$project$Main$update = F2(
 				};
 		}
 	});
-var _user$project$Main$Validate = {ctor: 'Validate'};
-var _user$project$Main$PasswordAgain = function (a) {
+var _user$project$Signup$Validate = {ctor: 'Validate'};
+var _user$project$Signup$PasswordAgain = function (a) {
 	return {ctor: 'PasswordAgain', _0: a};
 };
-var _user$project$Main$Password = function (a) {
+var _user$project$Signup$Password = function (a) {
 	return {ctor: 'Password', _0: a};
 };
-var _user$project$Main$Email = function (a) {
+var _user$project$Signup$Email = function (a) {
 	return {ctor: 'Email', _0: a};
 };
-var _user$project$Main$renderLogin = function (model) {
+var _user$project$Signup$view = function (model) {
+	var body = A2(
+		_elm_lang$core$Basics_ops['++'],
+		A2(
+			_user$project$Signup$validatedInput,
+			_elm_lang$core$Native_List.fromArray(
+				[
+					{ctor: '_Tuple3', _0: 'Email', _1: 'text', _2: _user$project$Signup$Email}
+				]),
+			model.errors.email),
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			A2(
+				_user$project$Signup$validatedInput,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						{ctor: '_Tuple3', _0: 'Password', _1: 'password', _2: _user$project$Signup$Password},
+						{ctor: '_Tuple3', _0: 'Re-enter Password', _1: 'password', _2: _user$project$Signup$PasswordAgain}
+					]),
+				model.errors.password),
+			_elm_lang$core$Native_List.fromArray(
+				[
+					A2(
+					_elm_lang$html$Html$button,
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_elm_lang$html$Html_Events$onClick(_user$project$Signup$Validate)
+						]),
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_elm_lang$html$Html$text('Submit')
+						])),
+					A2(
+					_elm_lang$html$Html$div,
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_elm_lang$html$Html_Attributes$class('response')
+						]),
+					_elm_lang$core$Native_List.fromArray(
+						[
+							_elm_lang$html$Html$text(model.response)
+						]))
+				])));
+	return A2(
+		_elm_lang$html$Html$div,
+		_elm_lang$core$Native_List.fromArray(
+			[]),
+		body);
+};
+var _user$project$Routes$update = F2(
+	function (msg, model) {
+		var newModel = function () {
+			var _p0 = msg;
+			switch (_p0.ctor) {
+				case 'SignupPage':
+					return 'SignupPage';
+				case 'LoginPage':
+					return 'LoginPage';
+				default:
+					return 'HomePage';
+			}
+		}();
+		return _elm_lang$core$Native_Utils.update(
+			model,
+			{route: newModel});
+	});
+var _user$project$Routes$navigate = F2(
+	function (model, destination) {
+		return A2(_user$project$Routes$update, destination, model);
+	});
+var _user$project$Routes$model = {route: 'SignupPage'};
+var _user$project$Routes$Model = function (a) {
+	return {route: a};
+};
+var _user$project$Routes$HomePage = {ctor: 'HomePage'};
+var _user$project$Routes$LoginPage = {ctor: 'LoginPage'};
+var _user$project$Routes$SignupPage = {ctor: 'SignupPage'};
+var _user$project$Stop$displayDefaultHelper = function (model) {
+	return model.$default ? ' (Default)' : '';
+};
+var _user$project$Stop$update = F2(
+	function (msg, model) {
+		var _p0 = msg;
+		switch (_p0.ctor) {
+			case 'Name':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{name: _p0._0}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'MtaStopId':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{mtaStopId: _p0._0}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'Default':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{$default: _p0._0}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			default:
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{view: _p0._0}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+		}
+	});
+var _user$project$Stop$Model = F4(
+	function (a, b, c, d) {
+		return {mtaStopId: a, name: b, $default: c, view: d};
+	});
+var _user$project$Stop$ChangeView = function (a) {
+	return {ctor: 'ChangeView', _0: a};
+};
+var _user$project$Stop$Default = function (a) {
+	return {ctor: 'Default', _0: a};
+};
+var _user$project$Stop$MtaStopId = function (a) {
+	return {ctor: 'MtaStopId', _0: a};
+};
+var _user$project$Stop$Name = function (a) {
+	return {ctor: 'Name', _0: a};
+};
+var _user$project$Stop$Show = {ctor: 'Show'};
+var _user$project$Stop$editStopView = function (model) {
 	return A2(
 		_elm_lang$html$Html$div,
 		_elm_lang$core$Native_List.fromArray(
@@ -8678,90 +8849,237 @@ var _user$project$Main$renderLogin = function (model) {
 				_elm_lang$core$Native_List.fromArray(
 					[
 						_elm_lang$html$Html_Attributes$type$('text'),
-						_elm_lang$html$Html_Attributes$placeholder('Email'),
-						_elm_lang$html$Html_Events$onInput(_user$project$Main$Email)
+						_elm_lang$html$Html_Attributes$placeholder('MTA STOP ID'),
+						_elm_lang$html$Html_Events$onInput(_user$project$Stop$MtaStopId)
 					]),
 				_elm_lang$core$Native_List.fromArray(
 					[])),
 				A2(
-				_elm_lang$html$Html$div,
+				_elm_lang$html$Html$br,
+				_elm_lang$core$Native_List.fromArray(
+					[]),
+				_elm_lang$core$Native_List.fromArray(
+					[])),
+				A2(
+				_elm_lang$html$Html$input,
 				_elm_lang$core$Native_List.fromArray(
 					[
-						_elm_lang$html$Html_Attributes$class('validation-error'),
-						_elm_lang$html$Html_Attributes$style(
-						_elm_lang$core$Native_List.fromArray(
-							[
-								{ctor: '_Tuple2', _0: 'color', _1: 'red'}
-							]))
+						_elm_lang$html$Html_Attributes$type$('text'),
+						_elm_lang$html$Html_Attributes$placeholder('Stop Nickname'),
+						_elm_lang$html$Html_Events$onInput(_user$project$Stop$Name)
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[])),
+				A2(
+				_elm_lang$html$Html$br,
+				_elm_lang$core$Native_List.fromArray(
+					[]),
+				_elm_lang$core$Native_List.fromArray(
+					[])),
+				A2(
+				_elm_lang$html$Html$button,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Events$onClick(
+						_user$project$Stop$ChangeView(_user$project$Stop$Show))
 					]),
 				_elm_lang$core$Native_List.fromArray(
 					[
-						_elm_lang$html$Html$text(model.errors.email)
+						_elm_lang$html$Html$text('Submit')
+					]))
+			]));
+};
+var _user$project$Stop$Edit = {ctor: 'Edit'};
+var _user$project$Stop$initialModel = {mtaStopId: '', name: '', $default: false, view: _user$project$Stop$Edit};
+var _user$project$Stop$showStopView = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		_elm_lang$core$Native_List.fromArray(
+			[]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				A2(
+				_elm_lang$html$Html$div,
+				_elm_lang$core$Native_List.fromArray(
+					[]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html$text(
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							model.name,
+							A2(
+								_elm_lang$core$Basics_ops['++'],
+								' (',
+								A2(
+									_elm_lang$core$Basics_ops['++'],
+									model.mtaStopId,
+									A2(
+										_elm_lang$core$Basics_ops['++'],
+										')',
+										_user$project$Stop$displayDefaultHelper(model))))))
 					])),
 				A2(
 				_elm_lang$html$Html$input,
 				_elm_lang$core$Native_List.fromArray(
 					[
-						_elm_lang$html$Html_Attributes$type$('password'),
-						_elm_lang$html$Html_Attributes$placeholder('Password'),
-						_elm_lang$html$Html_Events$onInput(_user$project$Main$Password)
-					]),
-				_elm_lang$core$Native_List.fromArray(
-					[])),
-				A2(
-				_elm_lang$html$Html$input,
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$html$Html_Attributes$type$('password'),
-						_elm_lang$html$Html_Attributes$placeholder('Re-enter Password'),
-						_elm_lang$html$Html_Events$onInput(_user$project$Main$PasswordAgain)
-					]),
-				_elm_lang$core$Native_List.fromArray(
-					[])),
-				A2(
-				_elm_lang$html$Html$div,
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$html$Html_Attributes$class('validation-error'),
-						_elm_lang$html$Html_Attributes$style(
-						_elm_lang$core$Native_List.fromArray(
-							[
-								{ctor: '_Tuple2', _0: 'color', _1: 'red'}
-							]))
+						_elm_lang$html$Html_Attributes$type$('checkbox'),
+						_elm_lang$html$Html_Attributes$checked(model.$default),
+						_elm_lang$html$Html_Events$onCheck(_user$project$Stop$Default)
 					]),
 				_elm_lang$core$Native_List.fromArray(
 					[
-						_elm_lang$html$Html$text(model.errors.password)
+						_elm_lang$html$Html$text('default?')
 					])),
 				A2(
 				_elm_lang$html$Html$button,
 				_elm_lang$core$Native_List.fromArray(
 					[
-						_elm_lang$html$Html_Events$onClick(_user$project$Main$Validate)
+						_elm_lang$html$Html_Events$onClick(
+						_user$project$Stop$ChangeView(_user$project$Stop$Edit))
 					]),
 				_elm_lang$core$Native_List.fromArray(
 					[
-						_elm_lang$html$Html$text('Submit')
-					])),
-				A2(
-				_elm_lang$html$Html$div,
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$html$Html_Attributes$class('response')
-					]),
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$html$Html$text(model.response)
+						_elm_lang$html$Html$text('Edit')
 					]))
 			]));
 };
-var _user$project$Main$view = function (model) {
-	var _p1 = model.page;
-	if (_p1.ctor === 'Login') {
-		return _user$project$Main$renderLogin(model);
+var _user$project$Stop$view = function (model) {
+	var _p1 = model.view;
+	if (_p1.ctor === 'Show') {
+		return _user$project$Stop$showStopView(model);
 	} else {
-		return _user$project$Main$renderHome(model);
+		return _user$project$Stop$editStopView(model);
 	}
+};
+var _user$project$Main$subscriptions = function (model) {
+	return _elm_lang$core$Platform_Sub$none;
+};
+var _user$project$Main$initialModel = {
+	signUp: _user$project$Signup$init,
+	stops: _elm_lang$core$Native_List.fromArray(
+		[]),
+	stopsUid: 0,
+	page: _user$project$Routes$model
+};
+var _user$project$Main$init = {ctor: '_Tuple2', _0: _user$project$Main$initialModel, _1: _elm_lang$core$Platform_Cmd$none};
+var _user$project$Main$Model = F4(
+	function (a, b, c, d) {
+		return {signUp: a, stops: b, stopsUid: c, page: d};
+	});
+var _user$project$Main$IndexedStop = F2(
+	function (a, b) {
+		return {id: a, model: b};
+	});
+var _user$project$Main$updateHelp = F3(
+	function (targetId, msg, _p0) {
+		var _p1 = _p0;
+		var _p3 = _p1.model;
+		var _p2 = _p1.id;
+		return A2(
+			_user$project$Main$IndexedStop,
+			_p2,
+			_elm_lang$core$Native_Utils.eq(targetId, _p2) ? _elm_lang$core$Basics$fst(
+				A2(_user$project$Stop$update, msg, _p3)) : _p3);
+	});
+var _user$project$Main$update = F2(
+	function (msg, model) {
+		var _p4 = msg;
+		switch (_p4.ctor) {
+			case 'Modify':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{
+							stops: A2(
+								_elm_lang$core$List$map,
+								A2(_user$project$Main$updateHelp, _p4._0, _p4._1),
+								model.stops)
+						}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'Insert':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{
+							stops: A2(
+								_elm_lang$core$Basics_ops['++'],
+								model.stops,
+								_elm_lang$core$Native_List.fromArray(
+									[
+										A2(_user$project$Main$IndexedStop, model.stopsUid, _user$project$Stop$initialModel)
+									])),
+							stopsUid: model.stopsUid + 1
+						}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			default:
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{
+							stops: A2(_elm_lang$core$List$drop, 1, model.stops)
+						}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+		}
+	});
+var _user$project$Main$HomePage = {ctor: 'HomePage'};
+var _user$project$Main$LoginPage = {ctor: 'LoginPage'};
+var _user$project$Main$SignUpPage = {ctor: 'SignUpPage'};
+var _user$project$Main$Remove = {ctor: 'Remove'};
+var _user$project$Main$Insert = {ctor: 'Insert'};
+var _user$project$Main$Modify = F2(
+	function (a, b) {
+		return {ctor: 'Modify', _0: a, _1: b};
+	});
+var _user$project$Main$viewIndexedStop = function (_p5) {
+	var _p6 = _p5;
+	return A2(
+		_elm_lang$html$Html_App$map,
+		_user$project$Main$Modify(_p6.id),
+		_user$project$Stop$view(_p6.model));
+};
+var _user$project$Main$view = function (model) {
+	var remove = A2(
+		_elm_lang$html$Html$button,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html_Events$onClick(_user$project$Main$Remove)
+			]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html$text('Remove')
+			]));
+	var add = A2(
+		_elm_lang$html$Html$button,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html_Events$onClick(_user$project$Main$Insert)
+			]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html$text('Add')
+			]));
+	var stops = A2(_elm_lang$core$List$map, _user$project$Main$viewIndexedStop, model.stops);
+	return A2(
+		_elm_lang$html$Html$div,
+		_elm_lang$core$Native_List.fromArray(
+			[]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				add,
+				remove,
+				A2(
+				_elm_lang$html$Html$div,
+				_elm_lang$core$Native_List.fromArray(
+					[]),
+				stops)
+			]));
 };
 var _user$project$Main$main = {
 	main: _elm_lang$html$Html_App$program(

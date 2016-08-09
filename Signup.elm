@@ -1,7 +1,6 @@
-module Main exposing (..)
+module Signup exposing (Model, Msg, init, update, view)
 
 import Html exposing (..)
-import Html.App as App
 import Html.Attributes exposing (..)
 import Html.Events exposing (onInput)
 import Html.Events exposing (onClick)
@@ -12,12 +11,7 @@ import String exposing (isEmpty)
 import List exposing (map, concat, concatMap)
 
 
-main : Program Never
-main =
-    App.program { init = init, subscriptions = subscriptions, view = view, update = update }
-
-
-
+--import Routes
 -- MODEL
 
 
@@ -27,7 +21,6 @@ type alias Model =
     , passwordAgain : String
     , response : String
     , errors : Errors
-    , page : Page
     }
 
 
@@ -37,11 +30,6 @@ type alias Errors =
     }
 
 
-type Page
-    = Login
-    | Home
-
-
 initialErrors : Errors
 initialErrors =
     Errors Nothing Nothing
@@ -49,12 +37,12 @@ initialErrors =
 
 model : Model
 model =
-    Model "" "" "" "" initialErrors Login
+    Model "" "" "" "" initialErrors
 
 
-init : ( Model, Cmd Msg )
+init : Model
 init =
-    ( model, Cmd.none )
+    model
 
 
 
@@ -112,7 +100,6 @@ update msg model =
         SuccessToMessage response ->
             ( { model
                 | response = response
-                , page = Home
               }
             , Cmd.none
             )
@@ -154,15 +141,6 @@ isValid model =
 
 
 
--- SUBSCRIPTIONS
-
-
-subscriptions : Model -> Sub Msg
-subscriptions model =
-    Sub.none
-
-
-
 -- HTTP
 
 
@@ -186,25 +164,15 @@ decodeResponse =
 
 view : Model -> Html Msg
 view model =
-    case model.page of
-        Login ->
-            renderLogin model
-
-        Home ->
-            renderHome model
-
-
-renderLogin : Model -> Html Msg
-renderLogin model =
     let
-        listGuy =
+        body =
             validatedInput [ ( "Email", "text", Email ) ] model.errors.email
                 ++ validatedInput [ ( "Password", "password", Password ), ( "Re-enter Password", "password", PasswordAgain ) ] model.errors.password
                 ++ [ button [ onClick Validate ] [ text "Submit" ]
                    , div [ class "response" ] [ text model.response ]
                    ]
     in
-        div [] listGuy
+        div [] body
 
 
 validatedInput : List ( String, String, String -> Msg ) -> Maybe String -> List (Html Msg)
