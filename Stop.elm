@@ -1,8 +1,22 @@
 module Stop exposing (..)
 
 import Html exposing (..)
+import Html.App as App
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
+
+
+main =
+    App.program
+        { init = ( initialModel, Cmd.none )
+        , view = view
+        , update = update
+        , subscriptions = subscriptions
+        }
+
+
+
+-- MODEL
 
 
 type alias Model =
@@ -22,11 +36,16 @@ initialModel =
     }
 
 
+
+--
+
+
 type Msg
     = Name String
     | MtaStopId String
     | Default Bool
     | ChangeView View
+    | Remove
 
 
 type View
@@ -57,6 +76,9 @@ update msg model =
             , Cmd.none
             )
 
+        Remove ->
+            ( model, Cmd.none )
+
 
 view : Model -> Html Msg
 view model =
@@ -82,6 +104,7 @@ showStopView model =
         [ div [] [ text (model.name ++ " (" ++ model.mtaStopId ++ ")" ++ (displayDefaultHelper model)) ]
         , input [ type' "checkbox", checked model.default, onCheck Default ] [ text "default?" ]
         , button [ onClick (ChangeView Edit) ] [ text "Edit" ]
+        , button [ onClick Remove ] [ text "remove" ]
         ]
 
 
@@ -94,3 +117,12 @@ editStopView model =
         , br [] []
         , button [ onClick (ChangeView Show) ] [ text "Submit" ]
         ]
+
+
+
+-- Subscriptions
+
+
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    Sub.none

@@ -37,19 +37,17 @@ type Page
 --
 
 
-initialModel : Model
-initialModel =
-    { signUp = Signup.init
-    , stopsList = StopsList.initialModel
-    , page = Routes.model
-    }
-
-
 init : ( Model, Cmd Msg )
 init =
-    ( initialModel
-    , Cmd.none
-    )
+    let
+        ( list, listMsgs ) =
+            StopsList.init
+    in
+        ( { signUp = Signup.init, stopsList = list, page = Routes.model }
+        , Cmd.batch
+            [ Cmd.map StopsList listMsgs
+            ]
+        )
 
 
 
@@ -72,10 +70,14 @@ type Msg
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        StopsList msg ->
-            ( { model | stopsList = StopsList.update msg model.stopsList }
-            , Cmd.none
-            )
+        StopsList subMsg ->
+            let
+                ( list, listCmds ) =
+                    StopsList.update subMsg model.stopsList
+            in
+                ( { model | stopsList = list }
+                , Cmd.map StopsList listCmds
+                )
 
 
 view : Model -> Html Msg

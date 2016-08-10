@@ -7,6 +7,15 @@ import List
 import Stop
 
 
+main =
+    App.program
+        { init = init
+        , view = view
+        , update = update
+        , subscriptions = subscriptions
+        }
+
+
 type alias Model =
     { stops : List IndexedStop
     , uid : Int
@@ -19,6 +28,11 @@ type alias IndexedStop =
     }
 
 
+init : ( Model, Cmd Msg )
+init =
+    ( initialModel, Cmd.none )
+
+
 initialModel : Model
 initialModel =
     { stops = []
@@ -28,24 +42,29 @@ initialModel =
 
 type Msg
     = Add
-    | Remove
     | Modify Int Stop.Msg
 
 
-update : Msg -> Model -> Model
+update : Msg -> Model -> ( Model, Cmd Msg )
 update message ({ stops, uid } as model) =
     case message of
         Add ->
-            { model
+            ( { model
                 | stops = stops ++ [ IndexedStop uid Stop.initialModel ]
                 , uid = uid + 1
-            }
-
-        Remove ->
-            { model | stops = List.drop 1 stops }
+              }
+            , Cmd.none
+            )
 
         Modify id msg ->
-            { model | stops = List.map (updateHelp id msg) stops }
+            if msg == Stop.Remove then
+                ( { model | stops = List.filter (\t -> t.id /= id) stops }
+                , Cmd.none
+                )
+            else
+                ( { model | stops = List.map (updateHelp id msg) stops }
+                , Cmd.none
+                )
 
 
 updateHelp : Int -> Stop.Msg -> IndexedStop -> IndexedStop
@@ -65,17 +84,21 @@ view model =
             List.map viewIndexedStop model.stops
 
         add =
-            button [ onClick Add ] [ text "add" ]
-
-        remove =
-            button [ onClick Remove ] [ text "remove" ]
+            button [ onClick Add ] [ text "Add a new stop" ]
     in
         div []
-            ([ add, remove ]
-                ++ stops
-            )
+            (stops ++ [ add ])
 
 
 viewIndexedStop : IndexedStop -> Html Msg
 viewIndexedStop { id, model } =
     App.map (Modify id) (Stop.view model)
+
+
+
+--
+
+
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    Sub.none
